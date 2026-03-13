@@ -1,37 +1,23 @@
-"use client"
+import HistoryList from "../../components/HistoryList";
+import Link from "next/link";
 
-import { useEffect,useState } from "react"
-import HistoryList from "@/components/HistoryList"
-import Link from "next/link"
+export default function HistoryPage() {
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gray-100 gap-6">
 
-export default function HistoryPage(){
+      <h1 className="text-3xl font-bold">
+        Study History
+      </h1>
 
-  const [dates,setDates] = useState<string[]>([])
+      <HistoryList />
 
-  const loadHistory = async ()=>{
-
-    const res = await fetch("/api/history")
-    const data = await res.json()
-    setDates(data)
-
-  }
-
-  useEffect(()=>{
-    loadHistory()
-  },[])
-
-  return(
-
-    <div className="min-h-screen bg-gray-200 flex flex-col items-center justify-center gap-6 text-black">
-
-      <HistoryList dates={dates}/>
-
-      <Link href="/" className="underline">
+      <Link
+        href="/"
+        className="text-blue-600 underline"
+      >
         Back to Dashboard
       </Link>
 
-    </div>
-
-  )
-
+    </main>
+  );
 }

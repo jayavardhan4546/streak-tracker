@@ -1,83 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
-export default function StudyButton({refresh}:any){
+export default function StudyButton({ onStudy }: { onStudy: () => void }) {
+  const [message, setMessage] = useState("");
 
-  const [date,setDate] = useState("")
-  const [msg,setMsg] = useState("")
+  const handleClick = () => {
+    const today = new Date().toDateString();
 
-  const markStudy = async () => {
+    const stored = localStorage.getItem("studyDates");
+    const dates = stored ? JSON.parse(stored) : [];
 
-    const res = await fetch("/api/study",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({date})
-    })
+    if (dates.includes(today)) {
+      setMessage("You already marked today.");
+      return;
+    }
 
-    const data = await res.json()
-    setMsg(data.message)
-    refresh()
+    dates.push(today);
+    localStorage.setItem("studyDates", JSON.stringify(dates));
 
-  }
+    setMessage("Study marked successfully!");
+    onStudy();
+  };
 
-  const markMiss = async () => {
+  return (
+    <div className="text-center mt-4">
+      <button
+        onClick={handleClick}
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg"
+      >
+        I Studied Today
+      </button>
 
-    const res = await fetch("/api/notstudy",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({date})
-    })
-
-    const data = await res.json()
-    setMsg(data.message)
-    refresh()
-
-  }
-
-  return(
-
-    <div className="bg-white p-6 rounded-xl shadow-lg w-[350px]">
-
-      <h3 className="text-lg font-semibold mb-4">
-        Mark Study Day
-      </h3>
-
-      <input
-      type="date"
-      value={date}
-      onChange={(e)=>setDate(e.target.value)}
-      className="border p-2 w-full rounded mb-4"
-      />
-
-      <div className="flex gap-3">
-
-        <button
-        onClick={markStudy}
-        className="bg-green-600 text-white w-full py-2 rounded hover:bg-green-700"
-        >
-          Studied
-        </button>
-
-        <button
-        onClick={markMiss}
-        className="bg-red-600 text-white w-full py-2 rounded hover:bg-red-700"
-        >
-          Not Studied
-        </button>
-
-      </div>
-
-      <p className="text-center mt-3 text-sm">
-        {msg}
-      </p>
-
+      {message && <p className="mt-3 text-green-600">{message}</p>}
     </div>
-
-  )
-
+  );
 }

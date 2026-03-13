@@ -1,29 +1,29 @@
-type Props={
-  dates:string[]
-}
+"use client";
 
-export default function HistoryList({dates}:Props){
+import { useEffect, useState } from "react";
 
-  return(
+export default function HistoryList() {
+  const [dates, setDates] = useState<string[]>([]);
 
-    <div className="bg-white p-8 rounded-xl shadow-lg w-[400px]">
+  useEffect(() => {
+    const stored = localStorage.getItem("studyDates");
+    const data = stored ? JSON.parse(stored) : [];
+    setDates(data.reverse());
+  }, []);
 
-      <h2 className="text-2xl font-bold mb-4">
-        Study History
-      </h2>
+  return (
+    <div className="bg-white p-6 shadow-md rounded-lg">
+      <h2 className="text-xl font-bold mb-4">Study History</h2>
 
-      <ul className="space-y-2">
+      {dates.length === 0 && <p>No study history yet.</p>}
 
-        {dates.map((d,i)=>(
-          <li key={i} className="border p-2 rounded">
-            📅 {d}
+      <ul>
+        {dates.map((date, index) => (
+          <li key={index} className="border-b py-2">
+            {date}
           </li>
         ))}
-
       </ul>
-
     </div>
-
-  )
-
+  );
 }

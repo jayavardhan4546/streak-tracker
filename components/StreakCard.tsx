@@ -1,25 +1,19 @@
-type Props={
-  streak:number
-  total:number
-  lastDate:string
-}
+type Props = {
+  streak: number;
+  total: number;
+  lastDate: string | null;
+};
 
-export default function StreakCard({streak,total,lastDate}:Props){
+export default function StreakCard({ streak, total, lastDate }: Props) {
+  return (
+    <div className="bg-white shadow-md rounded-lg p-6 text-center">
+      <h2 className="text-xl font-bold mb-4">Your Study Stats</h2>
 
-  return(
-
-    <div className="bg-white p-8 rounded-xl shadow-lg w-[350px] text-center">
-
-      <h2 className="text-2xl font-bold mb-4">
-        Study Statistics
-      </h2>
-
-      <p>🔥 Current Streak: {streak}</p>
-      <p>📚 Total Study Days: {total}</p>
-      <p>📅 Last Studied: {lastDate}</p>
-
+      <p className="text-lg">🔥 Current Streak: {streak} days</p>
+      <p className="text-lg">📚 Total Study Days: {total}</p>
+      <p className="text-lg">
+        🗓 Last Studied: {lastDate ? lastDate : "Never"}
+      </p>
     </div>
-
-  )
-
+  );
 }

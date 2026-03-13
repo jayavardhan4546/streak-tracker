@@ -1,55 +1,53 @@
-"use client"
+"use client";
 
-import { useEffect,useState } from "react"
-import StreakCard from "@/components/StreakCard"
-import StudyButton from "@/components/StudyButton"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import StreakCard from "../components/StreakCard";
+import StudyButton from "../components/StudyButton";
+import { calculateStreak } from "../lib/streakLogic";
+import Link from "next/link";
 
-export default function Home(){
+export default function Home() {
+  const [streak, setStreak] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [lastDate, setLastDate] = useState<string | null>(null);
 
-  const [data,setData] = useState({
-    streak:0,
-    total:0,
-    lastDate:"None"
-  })
+  const loadData = () => {
+    const stored = localStorage.getItem("studyDates");
+    const dates = stored ? JSON.parse(stored) : [];
 
-  const loadData = async ()=>{
+    const result = calculateStreak(dates);
 
-    const res = await fetch("/api/streak")
-    const json = await res.json()
-    setData(json)
+    setStreak(result.streak);
+    setTotal(result.total);
+    setLastDate(result.lastDate);
+  };
 
-  }
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  useEffect(()=>{
-    loadData()
-  },[])
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gray-100 gap-6">
 
-  return(
-
-    <div className="min-h-screen bg-gray-200 flex flex-col items-center justify-center gap-6 text-black">
-
-      <h1 className="text-4xl font-bold">
-        📚 Daily Learning Streak
+      <h1 className="text-3xl font-bold">
+        Daily Learning Streak Tracker
       </h1>
 
       <StreakCard
-      streak={data.streak}
-      total={data.total}
-      lastDate={data.lastDate}
+        streak={streak}
+        total={total}
+        lastDate={lastDate}
       />
 
-      <StudyButton refresh={loadData}/>
+      <StudyButton onStudy={loadData} />
 
       <Link
-      href="/history"
-      className="underline"
+        href="/history"
+        className="text-blue-600 underline"
       >
         View Study History
       </Link>
 
-    </div>
-
-  )
-
+    </main>
+  );
 }
